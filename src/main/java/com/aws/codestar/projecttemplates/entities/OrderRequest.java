@@ -13,6 +13,8 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderRequest {
     public enum OrderType{
         Breakfast, Lunch, Dinner

@@ -13,6 +13,8 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Material {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

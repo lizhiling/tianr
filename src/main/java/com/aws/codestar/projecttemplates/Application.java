@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.HandlerMapping;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  *  @ComponentScan
  */
 @SpringBootApplication
+@CrossOrigin
 public class Application extends SpringBootServletInitializer {
     @Bean
     public HandlerMapping handlerMapping() {

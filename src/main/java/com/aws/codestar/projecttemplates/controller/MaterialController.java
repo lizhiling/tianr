@@ -12,6 +12,7 @@
  */
 package com.aws.codestar.projecttemplates.controller;
 
+import com.aws.codestar.projecttemplates.dto.MaterialDto;
 import com.aws.codestar.projecttemplates.entities.Material;
 import com.aws.codestar.projecttemplates.repositories.DiskMaterialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -36,10 +38,10 @@ public class MaterialController {
     }
 
     @RequestMapping(path = "/material", method = RequestMethod.GET)
-    public ResponseEntity<List<Material>> listMaterials() {
+    public ResponseEntity<List<MaterialDto>> listMaterials() {
         List<Material> materialList = materialRepository.findAll();
-
-        return new ResponseEntity<List<Material>>(materialList, HttpStatus.OK);
+        List<MaterialDto> materialDtos = materialList.stream().map((m) -> new MaterialDto().fromEntity(m)).collect(Collectors.toList());
+        return new ResponseEntity<List<MaterialDto>>(materialDtos, HttpStatus.OK);
     }
 
     @RequestMapping(path = "/material/{materialId}", method = RequestMethod.GET)
