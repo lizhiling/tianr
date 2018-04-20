@@ -12,16 +12,23 @@
  */
 package com.aws.codestar.projecttemplates.controller;
 
-import com.aws.codestar.projecttemplates.entities.OrderRequest;
-import com.aws.codestar.projecttemplates.repositories.OrderRequestRepository;
+import com.aws.codestar.projecttemplates.dto.OrderRequestVo;
+import com.aws.codestar.projecttemplates.dto.ToBuyMaterialVo;
+import com.aws.codestar.projecttemplates.dto.Vo;
+import com.aws.codestar.projecttemplates.entities.*;
+import com.aws.codestar.projecttemplates.repositories.*;
+import com.aws.codestar.projecttemplates.services.OrderRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -30,10 +37,15 @@ public class OrderController {
     @Autowired
     OrderRequestRepository orderRequestRepository;
 
+    @Autowired
+    OrderRequestService orderRequestService;
+
     @RequestMapping(path = "/orderRequest", method = RequestMethod.POST)
-    public ResponseEntity<OrderRequest> createOrderRequest(@RequestBody OrderRequest newOrderRequest) {
-        OrderRequest dbOrderRequest = orderRequestRepository.saveAndFlush(newOrderRequest);
-        return new ResponseEntity<>(dbOrderRequest, HttpStatus.CREATED);
+    public ResponseEntity<OrderRequestVo> createOrderRequest(@RequestBody OrderRequest newOrderRequest) {
+        OrderRequest dbOrderRequest = orderRequestService.createOrderRequest(newOrderRequest);
+        OrderRequestVo dbOrderRequestVo = Vo.buildVoFromEntity(OrderRequestVo.class, dbOrderRequest);
+
+        return new ResponseEntity<>(dbOrderRequestVo, HttpStatus.CREATED);
     }
 
     @RequestMapping(path = "/orderRequest", method = RequestMethod.GET)
@@ -41,6 +53,14 @@ public class OrderController {
         List<OrderRequest> orderRequestList = orderRequestRepository.findAll();
 
         return new ResponseEntity<>(orderRequestList, HttpStatus.OK);
+    }
+
+    // For now, only to update status of ToBuyMaterial
+    @RequestMapping(path = "/orderRequest", method = RequestMethod.PUT)
+    public ResponseEntity<OrderRequestVo> putOrderRequest(@RequestBody OrderRequestVo updateOrderRequest){
+        OrderRequest dbOrderRequest = orderRequestService.updateOrderRequest(updateOrderRequest);
+        OrderRequestVo dbOrderRequestVo = Vo.buildVoFromEntity(OrderRequestVo.class, dbOrderRequest);
+        return new ResponseEntity<>(dbOrderRequestVo, HttpStatus.OK);
     }
 
     @RequestMapping(path = "/orderRequest/{orderRequestId}", method = RequestMethod.GET)

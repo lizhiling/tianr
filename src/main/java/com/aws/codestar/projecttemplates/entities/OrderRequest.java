@@ -1,14 +1,14 @@
 package com.aws.codestar.projecttemplates.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Getter
@@ -32,13 +32,20 @@ public class OrderRequest {
     @NotNull
     private OrderType ordertype;
 
-    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    private Date lastUpdateTime = new Date(System.currentTimeMillis());
+    @Column(columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private Date lastUpdateTime;
 
     @NotNull
     @ElementCollection(targetClass=Integer.class)
     private Set<Integer> disks = new HashSet<>();
 
     private String note;
+
+
+    @OneToMany( mappedBy = "orderRequest", orphanRemoval = true,
+            targetEntity = ToBuyMaterial.class, cascade = { CascadeType.ALL })
+    @JsonManagedReference
+    @JsonBackReference
+    private List<ToBuyMaterial> materials = new LinkedList<>();
 }

@@ -1,20 +1,17 @@
 package com.aws.codestar.projecttemplates.dto;
 
-import com.aws.codestar.projecttemplates.entities.Material;
 import com.aws.codestar.projecttemplates.entities.OrderRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderRequestDto implements Dto<OrderRequestDto> {
+public class OrderRequestVo implements Vo<OrderRequest> {
     private UUID id;
 
     private OrderRequest.OrderType ordertype;
@@ -25,13 +22,21 @@ public class OrderRequestDto implements Dto<OrderRequestDto> {
 
     private String note;
 
+    private List<ToBuyMaterialVo> toBuyMaterials;
+
     @Override
-    public Dto<OrderRequestDto> fromEntity(OrderRequestDto entity) {
+    public OrderRequestVo fromEntity(OrderRequest entity) {
         this.setId(entity.getId());
         this.setLastUpdateTime(entity.getLastUpdateTime());
         this.setOrdertype(entity.getOrdertype());
         this.setNote(entity.getNote());
         this.setDisks(entity.getDisks());
+
+
+        this.setToBuyMaterials(entity.getMaterials().stream().map(
+                material -> Vo.buildVoFromEntity(ToBuyMaterialVo.class, material))
+                .collect(Collectors.toList()));
+
         return this;
     }
 }

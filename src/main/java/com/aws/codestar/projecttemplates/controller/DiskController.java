@@ -12,7 +12,6 @@
  */
 package com.aws.codestar.projecttemplates.controller;
 
-import com.aws.codestar.projecttemplates.dto.DiskDto;
 import com.aws.codestar.projecttemplates.entities.Disk;
 import com.aws.codestar.projecttemplates.repositories.DiskRepository;
 import org.springframework.beans.factory.annotation.Autowired;

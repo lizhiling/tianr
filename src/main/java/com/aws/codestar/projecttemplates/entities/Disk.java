@@ -45,6 +45,6 @@ public class Disk {
     )
     @JsonManagedReference
     @JsonBackReference
-    @JsonIgnoreProperties("disks")
+//    @JsonIgnoreProperties("materials")
     private Set<Material> materials = new HashSet<>();
 }

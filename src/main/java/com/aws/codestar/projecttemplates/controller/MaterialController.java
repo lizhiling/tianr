@@ -12,9 +12,13 @@
  */
 package com.aws.codestar.projecttemplates.controller;
 
-import com.aws.codestar.projecttemplates.dto.MaterialDto;
+import com.aws.codestar.projecttemplates.dto.MaterialVo;
+import com.aws.codestar.projecttemplates.dto.ToBuyMaterialVo;
+import com.aws.codestar.projecttemplates.dto.Vo;
 import com.aws.codestar.projecttemplates.entities.Material;
+import com.aws.codestar.projecttemplates.entities.ToBuyMaterial;
 import com.aws.codestar.projecttemplates.repositories.DiskMaterialRepository;
+import com.aws.codestar.projecttemplates.repositories.ToBuyMaterialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +34,8 @@ import java.util.stream.Collectors;
 public class MaterialController {
     @Autowired
     DiskMaterialRepository materialRepository;
+    @Autowired
+    ToBuyMaterialRepository toBuyMaterialRepository;
 
     @RequestMapping(path = "/material", method = RequestMethod.POST)
     public ResponseEntity<Material> createMaterial(@RequestBody Material newMaterial) {
@@ -38,10 +44,22 @@ public class MaterialController {
     }
 
     @RequestMapping(path = "/material", method = RequestMethod.GET)
-    public ResponseEntity<List<MaterialDto>> listMaterials() {
+    public ResponseEntity<List<MaterialVo>> listMaterials() {
         List<Material> materialList = materialRepository.findAll();
-        List<MaterialDto> materialDtos = materialList.stream().map((m) -> new MaterialDto().fromEntity(m)).collect(Collectors.toList());
-        return new ResponseEntity<List<MaterialDto>>(materialDtos, HttpStatus.OK);
+        List<MaterialVo> materialDtos = materialList.stream().map(
+                (m) -> Vo.buildVoFromEntity(MaterialVo.class, m))
+                .collect(Collectors.toList());
+        return new ResponseEntity<List<MaterialVo>>(materialDtos, HttpStatus.OK);
+    }
+
+
+    // For single ToBuyMaterial update
+    @RequestMapping(path = "/material/to_buy", method = RequestMethod.PUT)
+    public ResponseEntity putToBuyMaterial(@RequestBody ToBuyMaterialVo toBuyMaterialVo){
+        ToBuyMaterial toBuyMaterial = toBuyMaterialRepository.findOne(toBuyMaterialVo.getId());
+        toBuyMaterial.setBought(toBuyMaterialVo.isBought());
+        toBuyMaterialRepository.saveAndFlush(toBuyMaterial);
+        return new ResponseEntity<>(Vo.buildVoFromEntity(ToBuyMaterialVo.class, toBuyMaterial), HttpStatus.OK);
     }
 
     @RequestMapping(path = "/material/{materialId}", method = RequestMethod.GET)
